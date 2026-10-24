@@ -27,10 +27,11 @@
      专用壳 · 绑定直播间 id=4
      房间码   AlQ1BF
      口令     b42TGXUwwJSPK7Z0
+     名称     静静❤️记录生活
      后端     47.243.48.54（vsjjdbghi.bsway.net.cn）
      ============================================================ */
 
-  // 后端域名：依次探测，第一个能通的就用它加载直播间
+  // 后端域名：依次探测，第一个能通的就用它
   var CONFIG_SOURCES = [
     'https://vsjjdbghi.bsway.net.cn',
     'https://vsjjdbghi.bskzv.com.cn'
@@ -54,7 +55,7 @@
     dbg.scrollTop = dbg.scrollHeight;
   }
 
-  // 1) 取回跳凭证（授权/支付回来后带在 URL 上）
+  // 1) 取回跳凭证
   var params = new URLSearchParams(location.search);
   var token     = params.get('wx_token') || '';
   var afterAuth = params.get('after_auth') || '';
@@ -64,7 +65,7 @@
     history.replaceState(null, '', location.pathname + (clean ? '?' + clean : '') + location.hash);
   }
 
-  // 2) 解析 hash：支持 #/r/房间码?k=口令 覆盖默认房间
+  // 2) hash 可覆盖房间
   function hashQuery(){
     var h = location.hash || '';
     var i = h.indexOf('?');
@@ -82,7 +83,7 @@
     };
   }
 
-  // 3) 探测哪个后端域名可用（只用于确认 base，房间固定为 4 号）
+  // 3) 探测可用后端域名
   function pickBase(){
     var i = 0;
     return new Promise(function(resolve){
@@ -103,7 +104,7 @@
     });
   }
 
-  // 4) 决定加载哪个房间：hash 优先，否则固定 4 号
+  // 4) hash 优先，否则固定 4 号
   function resolveRoom(){
     var h = roomFromHash();
     if (h && h.code) {
@@ -129,11 +130,10 @@
   frame.addEventListener('load', function(){ setTimeout(function(){ tip.classList.add('hide'); }, 250); });
   setTimeout(function(){ tip.classList.add('hide'); }, 6000);
 
-  // 5) 内层页请求顶层窗口代办（微信授权页/支付面板在 iframe 里跑不了）
+  // 5) 顶层代办授权/支付
   window.addEventListener('message', function(ev){
     var d = ev.data || {};
 
-    // 登录：微信授权页不能在 iframe 里渲染，交给顶层
     if (d.type === 'wx-auth-please' && d.authUrl) {
       log('[登录] 顶层跳转授权');
       try {
@@ -151,7 +151,6 @@
       return;
     }
 
-    // 支付：WeixinJSBridge 只注入顶层 WebView
     if (d.type === 'wx-pay-please' && d.url) {
       log('[支付] 顶层跳转收银台');
       try {
